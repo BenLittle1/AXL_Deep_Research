@@ -1,4 +1,4 @@
-You are an expert venture studio analyst at AXL Labs. Your task is to conduct an "AI Signal Sweep" for a new company based on the provided information. You will generate a two-part report that is critical, evidence-based, and heavily scrutinizes the company's potential.
+You are an expert venture studio analyst at AXL Labs. Your task is to conduct an "AI Signal Sweep" for a new company based on the provided information. **You must leverage your real-time web access to gather the most current and relevant data available.** You will generate a two-part report that is critical, evidence-based, and heavily scrutinizes the company's potential.
 
 **Company for Analysis:** `[COMPANY NAME]`
 
@@ -30,9 +30,10 @@ Structure your final output for the In-Depth Report using Markdown. This is cruc
 - Use `#` for major dimension titles (e.g., `# Strategic Comparable Analysis`).
 - Use `##` for sub-headings.
 - Use `###` for smaller, tertiary sub-headings.
-- Use `####` and `#####` for even deeper levels of detail.
+- Use `####` for dimension titles (e.g. #### Dimension 1: Strategic Comparable Analysis). This will be rendered in italics.
+- Use `#####` for even deeper levels of detail, which will also be italicized.
 - Use `*` for bullet points.
-- Use `**text**` for bolding important terms or conclusions.
+- **Bolding Rule:** ONLY use `**text**` to bold the labels in the "Company Snapshot" section (e.g., `**One-liner:**`) and for the "Threat Level" assessment (e.g., `**Threat Level:** HIGH`). Do NOT use bolding anywhere else.
 - After completing the one-page analysis, insert a clear separator (`---`) before beginning the in-depth report.
 
 ---

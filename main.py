@@ -138,7 +138,8 @@ def call_perplexity_api(api_key, prompt):
         "model": "llama-3.1-sonar-small-128k-online",
         "messages": [
             {"role": "user", "content": prompt}
-        ]
+        ],
+        "temperature": 0.1
     }
     try:
         response = requests.post(url, json=payload, headers=headers)
@@ -219,20 +220,28 @@ def generate_reports():
         if not pitch_deck_path:
             print(f"  - Skipping {company_name}: Missing pitch_deck file.")
             continue
-        if not internal_notes_path:
-            print(f"  - Skipping {company_name}: Missing internal_notes file.")
-            continue
 
         pitch_deck = read_document(pitch_deck_path)
-        internal_notes = read_document(internal_notes_path)
-
-        if pitch_deck is None or internal_notes is None:
+        if pitch_deck is None:
             continue
+            
+        internal_notes = ""
+        if internal_notes_path:
+            notes_content = read_document(internal_notes_path)
+            if notes_content:
+                internal_notes = notes_content
 
         # Create the company-specific prompt
         company_prompt = master_prompt.replace("[COMPANY NAME]", company_name)
         company_prompt = company_prompt.replace("[PITCH DECK HERE]", pitch_deck)
-        company_prompt = company_prompt.replace("[INTERNAL NOTES HERE]", internal_notes)
+        
+        # Only add internal notes section if notes are available
+        if internal_notes:
+            company_prompt = company_prompt.replace("[INTERNAL NOTES HERE]", internal_notes)
+        else:
+            # If no internal notes, remove the placeholder and its surrounding text
+            company_prompt = re.sub(r"## Internal Notes\s*\[INTERNAL NOTES HERE\]", "", company_prompt, flags=re.IGNORECASE)
+
 
         # Call the Perplexity API
         print(f"  - Calling Perplexity API for {company_name}...")
@@ -248,27 +257,26 @@ def generate_reports():
                 in_depth_content = parts[1].strip()
 
                 # Remove redundant titles
-                one_pager_content = remove_redundant_title(one_pager_content, ["one-pager", "company snapshot"])
-                in_depth_content = remove_redundant_title(in_depth_content, ["in-depth report"])
+                one_pager_content = remove_redundant_title(one_pager_content, [company_name, "one-pager", "company snapshot"])
+                in_depth_content = remove_redundant_title(in_depth_content, [company_name, "in-depth"])
 
-                # Generate One-Pager PDF
-                one_pager_output_path = os.path.join(reports_dir, f"{company_name}_one_pager.pdf")
-                one_pager_title = f"AI Signal Sweep: One-Page Analysis for {company_name}"
-                create_pdf_report(one_pager_content, one_pager_title, one_pager_output_path)
-
-                # Generate In-Depth Report PDF
-                in_depth_output_path = os.path.join(reports_dir, f"{company_name}_in_depth_report.pdf")
-                in_depth_title = f"AI Signal Sweep: In-Depth Report for {company_name}"
-                create_pdf_report(in_depth_content, in_depth_title, in_depth_output_path)
+                # Generate PDFs
+                one_pager_filename = f"{company_name}_one_pager.pdf"
+                in_depth_filename = f"{company_name}_in_depth_report.pdf"
+                
+                one_pager_path = os.path.join(reports_dir, one_pager_filename)
+                in_depth_path = os.path.join(reports_dir, in_depth_filename)
+                
+                create_pdf_report(one_pager_content, f"{company_name} One-Pager", one_pager_path)
+                create_pdf_report(in_depth_content, f"{company_name} In-Depth Report", in_depth_path)
             else:
-                # Fallback if the separator is missing
-                print(f"  - Warning: Separator '---' not found for {company_name}. Generating a single combined report.")
-                output_path = os.path.join(reports_dir, f"{company_name}_report.pdf")
-                title = f"AI Signal Sweep Report: {company_name}"
-                create_pdf_report(report_content, title, output_path)
+                # Handle cases where the delimiter is not present
+                print("  - The API response did not contain the '---' delimiter.")
+                report_filename = f"{company_name}_report.pdf"
+                report_path = os.path.join(reports_dir, report_filename)
+                create_pdf_report(report_content, f"{company_name} Report", report_path)
         else:
-            print(f"  - Failed to generate report for {company_name}. API response: {api_response}")
-
+            print(f"  - No response or empty choices from Perplexity API for {company_name}.")
 
 if __name__ == "__main__":
-    generate_reports()
+    generate_reports() 
