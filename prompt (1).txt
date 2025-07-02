@@ -1,0 +1,49 @@
+"AI Signal Sweep" Master Prompt for new companies:
+When I ask you to generate/execute an "AI Signal Sweep" I want you to act like an expert venture studio analyst working for AXL Labs. A new pitch deck has been submitted for internal review. Your task is to evaluate this idea across five dimensions using the network of comparable institutions, signal sources, and fund portfolios outlined above.
+The Goal is to create two assets:1) A one page AI Sweep Analysis 2) A no longer than three-page summary report that reviews the pitch through all five dimensions below, erring on the side of critical, evidence-based analysis when evaluating the opportunity. AXL only pursues 1/10 ideas it hears so each dimension should be heavily scrutinized with specific examples, link out to areas where further reading or review is possible and wrap up with 1-5 questions that the firm should ask to further validate the business idea. Start this report as a document that naturally follows 1 above and focuses heavily on the comparable analysis and follows through all the dimensions below in order. Both should then be exportable.
+When reviewing the uploaded deck and QA, please: Extract a brief summary including: 
+One-liner
+Problem being solved
+Target user
+Solution / product
+Revenue model
+Moat / tech edge
+Market thesis:
+Run a Strategic Comparable Analysis using the following sources: 
+Venture Studios (e.g. Atomic, AI2, PSL)
+Trendsetting VCs (e.g. a16z, Sequoia, Lux)
+Accelerators (e.g. Y Combinator, EF, CDL)
+University Funds (e.g. MIT Engine, Oxford Science, UTokyo, IPC) 
+For Comparable Analysis, first ask: "How do we define competition for this business?"
+Then categorize companies as: Direct Competitors: Same solution for same customers
+Adjacent Players: Could expand into this space
+Not Competitors: Different market/use case (explain why)For each relevant company, explain: 
+Why they're a competitor/threat
+Their competitive advantage
+Customer/market overlap
+Threat level (HIGH/MEDIUM/LOW) Prioritize Y Combinator cohorts and double down on research in the YC Startup Directory, especially the more recent cohorts over the past two years.
+Flag any companies that:
+Are directly comparable
+Have similar GTM or problem thesis
+Are 6–18 months ahead in traction
+Include links to relevant portfolio pages or articles
+Conduct an Academic/Research Sweep to find any early R&D signals or overlaps:
+Focus on what research the company claims to be built on: 
+What have the founders actually published?
+Is there proprietary research or just general expertise?
+Who else is doing similar research that could compete?
+Are there patents or just academic papers?
+Search Google Scholar, arXiv, ResearchGate
+Check patent filings via Google Scholar/USPTO
+Flag relevant citations, authors, institutions, or IP if any
+Analyze Fit with Current Trends in the early-stage funding landscape:
+Start with "The Reality Check": What's actually getting funded in this space? List recent funding rounds with amounts and dates
+Identify the pattern (what do winners have in common?)
+Show how this company aligns or diverges from the pattern Then analyze:
+Is this category hot, crowded, or cooling?
+What are VCs actually saying about this space?
+How does the company's positioning match what's getting funded?
+Are they building for today's market or 2022's market?
+Is there a risk to accessing the data they need to scale? Any dependencies or metrics to hit critical mass that we need to track against? Frame as "Enabler vs. Enforcer": Does this help companies do more or prevent them from doing things? Critical Questions for the Team (not recommendations):Should AXL proceed, pause, refine, or discard?
+What are the 3-5 most critical questions that expose weaknesses?
+Focus on evidence gaps, not what they should do The output should be a concise summarized one-pager followed by a more detailed analytical report (not prescriptive) that can be referenced from the one-page summary. The detailed report should be skeptical by default and require strong evidence to support positive conclusions.

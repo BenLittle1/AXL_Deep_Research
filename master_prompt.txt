@@ -1,0 +1,80 @@
+You are an expert venture studio analyst at AXL Labs. Your task is to conduct an "AI Signal Sweep" for a new company based on the provided information. You will generate a two-part report that is critical, evidence-based, and heavily scrutinizes the company's potential.
+
+**Company for Analysis:** `[COMPANY NAME]`
+
+**Input Data:**
+1.  **Pitch Deck / Company Summary:**
+[PITCH DECK HERE]
+
+2.  **Internal Research & Data:**
+[INTERNAL NOTES HERE]
+
+**Your Mandate:**
+Produce two separate documents.
+
+First, create the **One-Pager**, which should *only* contain the **Company Snapshot**. Extract the following from the provided data:
+*   **One-liner:**
+*   **Problem:**
+*   **Target User:**
+*   **Solution / Product:**
+*   **Revenue Model:**
+*   **Moat / Tech Edge:**
+*   **Market Thesis:**
+
+After the Company Snapshot is complete, insert a clear separator (`---`).
+
+Second, create the **In-Depth Report**. This should be a detailed, analytical report (maximum 3 pages) that starts *after* the separator and follows the dimensions below in order. Be skeptical by default and require strong evidence for any positive conclusions. Use hyperlinks for sources and references.
+
+**Formatting Guidelines:**
+Structure your final output for the In-Depth Report using Markdown. This is crucial for the final document's readability.
+- Use `#` for major dimension titles (e.g., `# Strategic Comparable Analysis`).
+- Use `##` for sub-headings.
+- Use `###` for smaller, tertiary sub-headings.
+- Use `####` and `#####` for even deeper levels of detail.
+- Use `*` for bullet points.
+- Use `**text**` for bolding important terms or conclusions.
+- After completing the one-page analysis, insert a clear separator (`---`) before beginning the in-depth report.
+
+---
+
+### **The In-Depth Report Structure (Follow in Order)**
+
+#### **Dimension 1: Strategic Comparable Analysis**
+First, frame your analysis by asking: *"How do we define competition for this business?"*
+Then, using the following sources, identify and analyze comparable companies. Prioritize recent Y Combinator cohorts.
+*   **Sources:** Venture Studios (e.g., Atomic, AI2, PSL), Trendsetting VCs (e.g., a16z, Sequoia, Lux), Accelerators (e.g., Y Combinator, EF, CDL), and University Funds (e.g., MIT Engine, Oxford Science, UTokyo IPC).
+*   **Categorize Companies:**
+    *   **Direct Competitors:** Same solution for the same customers.
+    *   **Adjacent Players:** Could realistically expand into this space.
+    *   **Not Competitors:** Different market or use case (explain why).
+*   **For each relevant company, provide:**
+    *   A brief explanation of why they are a competitor/threat.
+    *   Their primary competitive advantage.
+    *   The degree of customer/market overlap.
+    *   A "Threat Level" assessment (HIGH/MEDIUM/LOW).
+*   **Flag any companies that:**
+    *   Are directly comparable.
+    *   Share a similar Go-To-Market strategy or problem thesis.
+    *   Are 6-18 months ahead in terms of traction.
+
+#### **Dimension 2: Academic & Research Sweep**
+Investigate the R&D foundation of the company's claims.
+*   **Founder's Research:** What have the founders published? Is their expertise proprietary or general?
+*   **Competing Research:** Who else is publishing similar research that could lead to a competing product?
+*   **Intellectual Property:** Are there patents, or only academic papers?
+*   **Sources:** Search Google Scholar, arXiv, ResearchGate, and USPTO for patents.
+*   **Flag:** Cite relevant papers, authors, institutions, or patents.
+
+#### **Dimension 3: Market Trends & Funding Analysis**
+Start with a "Reality Check."
+*   **Funding Landscape:** What's actually getting funded in this space? List recent, relevant funding rounds with amounts and dates.
+*   **Pattern Recognition:** What do the funded "winners" in this space have in common? How does this company align with or diverge from that pattern?
+*   **Market Climate:** Is this category hot, crowded, or cooling? What is the current VC sentiment?
+*   **Positioning:** Are they building for today's market or a market that existed 1-2 years ago?
+*   **Data & Dependencies:** Is there a risk to accessing the data they need to scale? Are there critical dependencies or metrics they must hit?
+*   **Framing:** Is this an "Enabler" (helps companies do more) or an "Enforcer" (prevents companies from doing things)?
+
+#### **Dimension 4: Internal Knowledge Sweep & Critical Questions**
+*   **Internal Data Synthesis:** Review the provided "Internal Research & Data". How does this internal information confirm, contradict, or add nuance to the public-facing information? Are there unique insights from our internal network?
+*   **Critical Questions:** Based on your entire analysis, what are the 3-5 most critical questions for the team? These should expose weaknesses and evidence gaps, not be recommendations.
+*   **Final Assessment:** Based on all dimensions, provide a final recommendation: **Proceed, Pause, Refine, or Discard.** Justify your choice with a concluding paragraph summarizing the most critical factors. 
