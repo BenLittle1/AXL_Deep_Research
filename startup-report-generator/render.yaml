@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: axl-deep-research
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python start.py
+    envVars:
+      - key: PERPLEXITY_API_KEY
+        sync: false  # Set this manually in Render dashboard
+      - key: AI_API_KEY  
+        sync: false  # Set this manually in Render dashboard
+      - key: AI_API_ENDPOINT
+        value: https://api.perplexity.ai/chat/completions
+    healthCheckPath: /health 
