@@ -1,0 +1,1 @@
+# This file makes startup-report-generator a Python package 
