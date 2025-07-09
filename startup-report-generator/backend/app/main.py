@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from typing import Optional, Dict, Any
 from dotenv import load_dotenv
 import os
+import traceback
+import time
 
 from . import agents, pdf_generator
 
@@ -119,59 +121,186 @@ async def airtable_webhook(request: AirtableWebhookRequest):
     Endpoint specifically designed for Airtable webhook integration.
     Generates both reports and returns status information.
     """
-    print(f"🔔 Airtable webhook triggered for {request.company_name}")
+    start_time = time.time()
+    
+    print("="*80)
+    print("🔔 AIRTABLE WEBHOOK STARTED")
+    print("="*80)
+    print(f"⏰ Timestamp: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"📋 Company Name: {request.company_name}")
     print(f"📋 Record ID: {request.airtable_record_id}")
     print(f"📧 Contact Email: {request.contact_email}")
+    print(f"🌐 Company URL: {request.company_url}")
     
     # Handle workflow_status - can be string or object
     workflow_status_name = ""
-    if request.workflow_status:
-        if isinstance(request.workflow_status, dict):
-            workflow_status_name = request.workflow_status.get('name', '')
+    try:
+        if request.workflow_status:
+            if isinstance(request.workflow_status, dict):
+                workflow_status_name = request.workflow_status.get('name', '')
+                print(f"🔄 Workflow Status (object): {request.workflow_status}")
+            else:
+                workflow_status_name = str(request.workflow_status)
+                print(f"🔄 Workflow Status (string): {workflow_status_name}")
         else:
-            workflow_status_name = str(request.workflow_status)
+            print("🔄 Workflow Status: None")
+    except Exception as e:
+        print(f"❌ Error processing workflow_status: {str(e)}")
+        workflow_status_name = "Error parsing status"
     
-    print(f"🔄 Workflow Status: {workflow_status_name}")
     print(f"📄 Pitch Deck Content Length: {len(request.pitch_deck_content)} chars")
     print(f"📝 Internal Notes Length: {len(request.internal_notes)} chars")
+    print(f"🔄 Generate Both Reports: {request.generate_both}")
+    
+    # Check environment variables
+    print("\n🔧 ENVIRONMENT CHECK:")
+    perplexity_key = os.getenv("PERPLEXITY_API_KEY")
+    if perplexity_key:
+        print(f"✅ PERPLEXITY_API_KEY: Found (length: {len(perplexity_key)})")
+    else:
+        print("❌ PERPLEXITY_API_KEY: Not found")
+    
+    ai_api_key = os.getenv("AI_API_KEY")
+    if ai_api_key:
+        print(f"✅ AI_API_KEY: Found (length: {len(ai_api_key)})")
+    else:
+        print("❌ AI_API_KEY: Not found")
+    
+    ai_endpoint = os.getenv("AI_API_ENDPOINT")
+    if ai_endpoint:
+        print(f"✅ AI_API_ENDPOINT: {ai_endpoint}")
+    else:
+        print("❌ AI_API_ENDPOINT: Not found")
     
     try:
+        print("\n📊 STEP 1: VALIDATING INPUT")
         # Validate required fields
         if not request.company_name:
+            error_msg = "Company name is required"
+            print(f"❌ Validation failed: {error_msg}")
             return {
                 "success": False,
-                "error": "Company name is required",
-                "airtable_record_id": request.airtable_record_id
+                "error": error_msg,
+                "airtable_record_id": request.airtable_record_id,
+                "step_failed": "validation"
             }
+        
+        # Validate email format if provided
+        if request.contact_email and "@" not in request.contact_email:
+            print(f"⚠️ Warning: contact_email may be invalid: {request.contact_email}")
+        
+        print(f"✅ Input validation passed")
+        
+        print("\n📊 STEP 2: EXECUTING AGENT 1 (RESEARCH ANALYST)")
+        print(f"🤖 Calling agents.run_research_agent with:")
+        print(f"   - company_name: {request.company_name}")
+        print(f"   - company_url: {request.company_url or 'Generated from company name'}")
+        print(f"   - pitch_deck_content length: {len(request.pitch_deck_content)}")
+        print(f"   - internal_notes length: {len(request.internal_notes)}")
         
         # 1. Run Agent 1 to get the Comprehensive Intelligence Brief
-        print("🤖 Executing Agent 1: Research Analyst...")
-        intelligence_brief = agents.run_research_agent(
-            request.company_name, 
-            request.company_url or f"https://{request.company_name.lower().replace(' ', '')}.com",
-            request.pitch_deck_content, 
-            request.internal_notes
-        )
-        
-        if not intelligence_brief:
+        try:
+            intelligence_brief = agents.run_research_agent(
+                request.company_name, 
+                request.company_url or f"https://{request.company_name.lower().replace(' ', '')}.com",
+                request.pitch_deck_content, 
+                request.internal_notes
+            )
+            
+            if not intelligence_brief:
+                error_msg = "Agent 1 returned None/empty response"
+                print(f"❌ Agent 1 failed: {error_msg}")
+                return {
+                    "success": False,
+                    "error": error_msg,
+                    "company_name": request.company_name,
+                    "airtable_record_id": request.airtable_record_id,
+                    "step_failed": "agent_1"
+                }
+            
+            if not isinstance(intelligence_brief, dict):
+                error_msg = f"Agent 1 returned invalid type: {type(intelligence_brief)}"
+                print(f"❌ Agent 1 failed: {error_msg}")
+                return {
+                    "success": False,
+                    "error": error_msg,
+                    "company_name": request.company_name,
+                    "airtable_record_id": request.airtable_record_id,
+                    "step_failed": "agent_1"
+                }
+            
+            print(f"✅ Agent 1 completed successfully!")
+            print(f"   - Company Name from AI: {intelligence_brief.get('companyName', 'Not found')}")
+            print(f"   - Tagline: {intelligence_brief.get('tagline', 'Not found')}")
+            print(f"   - Executive Summary length: {len(intelligence_brief.get('executiveSummary', ''))}")
+            print(f"   - Team members: {len(intelligence_brief.get('team', []))}")
+            print(f"   - Brief structure keys: {list(intelligence_brief.keys())}")
+            
+        except Exception as agent1_error:
+            error_msg = f"Agent 1 exception: {str(agent1_error)}"
+            print(f"❌ Agent 1 exception: {error_msg}")
+            print(f"❌ Agent 1 traceback: {traceback.format_exc()}")
             return {
                 "success": False,
-                "error": "Failed to retrieve company data from research agent",
+                "error": error_msg,
                 "company_name": request.company_name,
-                "airtable_record_id": request.airtable_record_id
+                "airtable_record_id": request.airtable_record_id,
+                "step_failed": "agent_1",
+                "traceback": traceback.format_exc()
             }
-        
-        print(f"✅ Agent 1 completed successfully for: {intelligence_brief.get('companyName', request.company_name)}")
         
         reports_generated = []
         
         if request.generate_both:
+            print(f"\n📊 STEP 3: GENERATING BOTH REPORTS")
             # Generate both reports
             for report_type in ['one_pager', 'deep_dive']:
                 try:
-                    print(f"📄 Generating {report_type} report...")
-                    formatted_markdown = agents.run_formatting_agent(intelligence_brief, report_type)
-                    pdf_bytes = pdf_generator.create_professional_pdf(formatted_markdown, report_type)
+                    print(f"\n📄 Generating {report_type} report...")
+                    
+                    print(f"📊 STEP 3.{report_type[0]}: EXECUTING AGENT 2 (FORMATTING SPECIALIST)")
+                    try:
+                        formatted_markdown = agents.run_formatting_agent(intelligence_brief, report_type)
+                        if not formatted_markdown:
+                            raise ValueError(f"Agent 2 returned empty markdown for {report_type}")
+                        
+                        print(f"✅ Agent 2 completed for {report_type}")
+                        print(f"   - Formatted markdown length: {len(formatted_markdown)} characters")
+                        
+                    except Exception as agent2_error:
+                        error_msg = f"Agent 2 failed for {report_type}: {str(agent2_error)}"
+                        print(f"❌ {error_msg}")
+                        print(f"❌ Agent 2 traceback: {traceback.format_exc()}")
+                        reports_generated.append({
+                            "type": report_type,
+                            "filename": f"{request.company_name}_{report_type}.pdf",
+                            "error": error_msg,
+                            "status": "failed",
+                            "step_failed": "agent_2"
+                        })
+                        continue
+                    
+                    print(f"📊 STEP 3.{report_type[0]}b: EXECUTING PDF GENERATOR")
+                    try:
+                        pdf_bytes = pdf_generator.create_professional_pdf(formatted_markdown, report_type)
+                        if not pdf_bytes:
+                            raise ValueError(f"PDF generator returned empty bytes for {report_type}")
+                        
+                        print(f"✅ PDF generator completed for {report_type}")
+                        print(f"   - PDF size: {len(pdf_bytes)} bytes")
+                        
+                    except Exception as pdf_error:
+                        error_msg = f"PDF generator failed for {report_type}: {str(pdf_error)}"
+                        print(f"❌ {error_msg}")
+                        print(f"❌ PDF generator traceback: {traceback.format_exc()}")
+                        reports_generated.append({
+                            "type": report_type,
+                            "filename": f"{request.company_name}_{report_type}.pdf",
+                            "error": error_msg,
+                            "status": "failed",
+                            "step_failed": "pdf_generator"
+                        })
+                        continue
                     
                     # Generate filename
                     company_safe_name = intelligence_brief.get('companyName', request.company_name).replace(' ', '_').replace('.', '_')
@@ -190,17 +319,23 @@ async def airtable_webhook(request: AirtableWebhookRequest):
                     print(f"✅ {report_type} report generated successfully ({len(pdf_bytes)} bytes)")
                     
                 except Exception as e:
-                    print(f"❌ Error generating {report_type}: {str(e)}")
+                    error_msg = f"Unexpected error generating {report_type}: {str(e)}"
+                    print(f"❌ {error_msg}")
+                    print(f"❌ Unexpected error traceback: {traceback.format_exc()}")
                     reports_generated.append({
                         "type": report_type,
                         "filename": f"{request.company_name}_{report_type}.pdf",
-                        "error": str(e),
-                        "status": "failed"
+                        "error": error_msg,
+                        "status": "failed",
+                        "step_failed": "unexpected",
+                        "traceback": traceback.format_exc()
                     })
                     continue
         
         success_count = len([r for r in reports_generated if r.get("status") == "generated"])
+        processing_time = round(time.time() - start_time, 2)
         
+        print(f"\n📊 STEP 4: PREPARING RESPONSE")
         response_data = {
             "success": success_count > 0,
             "company_name": intelligence_brief.get('companyName', request.company_name),
@@ -216,22 +351,35 @@ async def airtable_webhook(request: AirtableWebhookRequest):
                 "valuation": intelligence_brief.get('financials', {}).get('valuation', ''),
                 "team_size": len(intelligence_brief.get('team', []))
             },
-            "processing_time_seconds": "15-30"  # Approximate
+            "processing_time_seconds": processing_time,
+            "timestamp": time.strftime('%Y-%m-%d %H:%M:%S')
         }
         
+        print(f"✅ Response prepared successfully")
         print(f"🎉 Webhook completed successfully for {request.company_name}")
-        print(f"📊 Generated {success_count} reports")
+        print(f"📊 Generated {success_count} reports in {processing_time} seconds")
+        print("="*80)
         
         return response_data
         
     except Exception as e:
-        print(f"❌ Error in Airtable webhook: {str(e)}")
+        processing_time = round(time.time() - start_time, 2)
+        error_msg = f"Unexpected error in Airtable webhook: {str(e)}"
+        print(f"❌ {error_msg}")
+        print(f"❌ Full traceback: {traceback.format_exc()}")
+        print(f"⏰ Processing time before error: {processing_time} seconds")
+        print("="*80)
+        
         return {
             "success": False,
-            "error": str(e),
+            "error": error_msg,
             "company_name": request.company_name,
             "airtable_record_id": request.airtable_record_id,
-            "contact_email": request.contact_email
+            "contact_email": request.contact_email,
+            "step_failed": "unexpected_top_level",
+            "processing_time_seconds": processing_time,
+            "timestamp": time.strftime('%Y-%m-%d %H:%M:%S'),
+            "traceback": traceback.format_exc()
         }
 
 if __name__ == "__main__":
