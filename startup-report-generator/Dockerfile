@@ -14,14 +14,13 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy requirements first for better layer caching
-COPY requirements.txt .
+# Copy only the startup-report-generator directory contents
+COPY startup-report-generator/requirements.txt .
+COPY startup-report-generator/start.py .
+COPY startup-report-generator/backend ./backend
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
-COPY . .
 
 # Expose port
 EXPOSE 8000
@@ -30,5 +29,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:8000/health || exit 1
 
-# Run the full application
+# Run the web server startup script
 CMD ["python", "start.py"] 
