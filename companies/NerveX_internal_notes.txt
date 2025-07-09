@@ -1,0 +1,493 @@
+SECTION 1: COMPANY OVERVIEW
+
+
+Company Information
+
+
+Q: Company Name
+
+A: NerveX
+
+
+
+Concept Summary
+
+
+Q: What problem are you solving? For who? What is the result?
+
+A: NerveX is building the link between medical devices, AI, and healthcare providers. With NxVET as a starting point, we address high veterinarian burnout and inefficiencies from manual recordkeeping and stressed patients during consultations by providing NxSCOPE, a stethoscope attachment that automates data capture and transcription, allowing veterinarians to focus on care and improve patient experience.
+
+
+
+Q: What is the industry or sector categorization?
+
+A: Global veterinary services technology, specifically SaaS and integrated medical devices for veterinary clinics, tapping a $120.1 B TAM and $49.3 B SAM in North America.
+
+
+
+Q: Is anyone else doing this? How are you different?
+
+A: There are other SaaS companies in the AI scribe space, none developing hardware, and none developing hardware with integrated biomedical sensing. There are other digital sensing companies (e.g. digital stethoscopes), but none have the software infrastructure to bridge the gap between physiological data, AI and healthcare providers.
+
+
+
+Company Details
+
+
+Q: Is this a founder-led idea, corporate initiative, or based on existing IP?
+
+A: NxSCOPE is built on four years of proprietary R&D by veterinarians and engineers at NerveX, driven by our team’s expertise in veterinary science and biomedical engineering, ensuring a robust, IP-protected solution.
+
+
+
+Q: What have you accomplished to date (idea, concept, actively developing, scaling, etc.)?
+
+A: We’ve closed a $1.4M pre-seed round, completed four years of integrated hardware and software development, and initiated initial device shipments to active pilot clinics, generating our first medical records through the SaaS platform. We have secured a partnership with a telemedicine company transcribing and generating over 5,000 call reports per month. We have just started hardware sales with our batch of 100 production NxSCOPE devices.
+
+
+
+Q: Do you have any preliminary traction or purchase intent from existing or prospective customers?
+
+A: Our platform is operational in multiple pilot clinics with records actively generated; we’ve secured $1.4M in pre-seed funding and are on track with product launches (NxVET, NxSCOPE) and international expansion plans. We have just started hardware sales with our batch of 100 production NxSCOPE devices. We are in discussions with major enterprise customers.
+
+
+
+Q: Are you Toronto-based or willing to move to Toronto to develop this idea?
+
+A: Toronto-based. Part of UTEST, already in the SRIC building (Room W680).
+
+
+
+
+
+SECTION 2: BUSINESS PROPOSAL
+
+
+Customer
+
+
+Q: Who has this problem? What is the market size of the solution?
+
+A: We target small to mid-sized veterinary clinics and hospital groups across North America, benefiting veterinarians looking to streamline recordkeeping and improve patient care within a $49.3 B serviceable market.
+
+
+
+Q: Who is the ideal customer? Sector, size, problem, people, frequency.
+
+A: Our ideal customer is a veterinary clinic owner or practice manager running 2–10 exam rooms, seeking to reduce administrative burden, improve data accuracy, and enhance patient experience through tech-driven workflows.
+
+
+
+Q: Who is not the ideal customer? What do you run away from?
+
+A: For now we are avoiding the consumer segment (pet owners) and focusing on larger chains of veterinary clinics.
+
+
+
+Value Proposition
+
+
+Q: Is there a quantifiable value proposition? What is it?
+
+A: We save 30% of administrative time currently spent writing medical records. We do so using encrypted recordings stored on a dedicated device (as opposed to clinic staff members using apps on personal devices). We also avoid the need for rectal temperature measurements, which contributes to veterinary health having the highest rate of occupational injuries in North America.
+
+
+
+Q: How often (frequency) does your user have the problem? How intense is the problem?
+
+A: Every day, every appointment.
+
+
+
+Q: How will they know if your product has solved the problem?
+
+A: Minimize time spend writing medical records, minimize time collecting TPR measurements (temperature, pulse and respiratory rate).
+
+
+
+Feature Set
+
+
+Q: What is the MVP? Do you have a feature development roadmap?
+
+A: Our MVP delivers core value via the NxSCOPE stethoscope attachment and SaaS transcription platform, capturing audio and health metrics in real time; phase two will integrate advanced analytics and hardware enhancements. Phase 3 will be a consumer oriented collar that integrates our sensors to provide telemedicine and "fitbit for pets" functionality.
+
+
+
+Q: Who will use the first 'bad' product? Are they paying customers, partners, free users?
+
+A: Already have paid customers in clinics across North America. These early adopters have been forgiving during rollout, supporting regular firmware updates remotely for product improvements.
+
+
+
+Q: Does your product actually solve the problem? How and why not?
+
+A: Yes. We're actively solving the problem of physiological data collection and medical record generation in clinics. We're actively trying to improve the user experience (we currently use a bluetooth mesh network, but are developing a power-efficient WiFi solution).
+
+
+
+Business Model
+
+
+Q: Who is your early customer? How do you know them?
+
+A: Veterinary clinics. We are highly connected through our Chief Veterinary Officer, Dr. Mark de Wolde.
+
+
+
+Q: What is your pricing model? How do you price your product?
+
+A: We offer our SaaS transcription service at $75/month per clinic, with hardware device pricing scheduled for phase two, ensuring low entry cost and clear ROI for veterinary practices.
+
+
+
+Q: Who are your buyers? How do you know them?
+
+A: Our economic buyers are veterinary practice owners and operations managers responsible for workflow efficiency and patient satisfaction, typically evaluating ROI on clinical productivity tools.
+
+
+
+
+
+SECTION 3: PARTNERSHIP WITH AXL
+
+
+Why You?
+
+
+Q: Why are you the best person to turn this idea into a billion-dollar company?
+
+A: Our leadership blends veterinary expertise and business acumen—Dr. Gerard O’Leary (CEO) and Dr. Mark de Wolde (CVO) co-founded NxVET, combining 25 years of clinical insights with 10+ years of hardware and software development to execute this vision.
+
+
+
+Q: What role do you see yourself playing at the company moving forward?
+
+A: CEO. Driving the company to transform healthcare starting in the veterinary space, and translating our technology to human medicine. I will also maintain an active role in driving the engineering team, given that I was intimately involved in the development of the technology to date.
+
+
+
+Q: Who are your first 5 ideal hires?
+
+A: We have a stellar engineering team, but would like to convert some contractors to full-time employees. We need to expand our sales, marketing and support team.
+
+
+
+Why Us?
+
+
+Q: What can AXL do to best support the development of your idea?
+
+A: AXL is an amazing initiative that could help launch our technology at the perfect time. We would greatly appreciate the mentorship to take this from product-solution-fit to product-market-fit.
+
+
+
+Q: How intensive do you believe your idea will be on AXL's technical team? Be as specific as possible.
+
+A: I believe we could actually augment AXLs technical team. We have a multi-disciplinary collaborative lab on the 6th floor of the same building. We have extensive prototyping experience (PCB design, multi-material 3D printing to injection molding). We would greatly benefit from mentorship in getting this into higher production volumes.
+
+
+
+Q: Are you looking for support on the business development and market validation process?
+
+A: Absolutely, we are just starting to grow this side of the business with just 1 head of business development.
+
+
+
+Why Now?
+
+
+Q: You have lots of options. Why are you the right person to do this now?
+
+A: We have the technology. We have the core team. We need support in scaling and getting this into clinics.
+
+
+
+Q: What has changed in the market to make this the right time to launch your solution?
+
+A: AI has transformed how technology is built and adopted. We are riding the wave of technology adoption into clinics.
+
+
+
+Q: How will this idea stay ahead or stay differentiated long enough to become the market leader?
+
+A: We uniquely integrate stethoscope hardware with real-time audio capture and AI-driven transcription, unlike standalone EMR or transcription services, establishing a defensible ecosystem at the clinician's point of care.
+
+
+
+
+
+---
+
+Submitted: 2025-06-18 16:16:00 UTC
+
+Scoring
+These scores are only updated if the user selects the update button. 
+
+Problem Statement Score
+
+pass
+Competitor Score
+
+fail
+Industry Score
+
+pass
+Idea Source Score
+
+pass
+Progress Score
+
+pass
+Traction Score
+
+pass
+–
+Location Score
+
+fail
+Target Audience Score
+
+pass
+Ideal Customer Score
+
+pass
+Non Ideal Customer Score
+
+fail
+Quantifiable Value Score
+
+fail
+Problem Frequency Score
+
+fail
+–
+Success Metrics Score
+
+fail
+MVP Score
+
+pass
+First Users Score
+
+fail
+Problem Fit Score
+
+fail
+Early Customers Score
+
+fail
+Pricing Score
+
+pass
+–
+Buyers Score
+
+pass
+Founders Fit Score
+
+pass
+Role Score
+
+fail
+Team Growth Score
+
+fail
+AXL Support Score
+
+pass
+Tech Resources Score
+
+fail
+Business Support Score
+
+fail
+Founder Timing Score
+
+fail
+Market Timing Score
+
+fail
+Differentiation Score
+
+pass
+Submitted Field Inputs
+Industry
+
+Global veterinary services technology, specifically SaaS and integrated medical devices for veterinary clinics, tapping a $120.1 B TAM and $49.3 B SAM in North America.
+Industry Commentary
+
+You've precisely defined your sector and backed it with strong market sizing on slide 4. You could further segment by clinic size or region to highlight near-term opportunities.
+Problem Statement
+
+NerveX is building the link between medical devices, AI, and healthcare providers. With NxVET as a starting point, we address high veterinarian burnout and inefficiencies from manual recordkeeping and stressed patients during consultations by providing NxSCOPE, a stethoscope attachment that automates data capture and transcription, allowing veterinarians to focus on care and improve patient experience.
+Problem Statement Commentary
+
+You clearly articulate the pain points of burnout and recordkeeping and connect directly to how NxSCOPE alleviates them (slides 2–3). Consider quantifying the time saved per consultation to strengthen the narrative.
+–
+Competitors
+
+There are other SaaS companies in the AI scribe space, none developing hardware, and none developing hardware with integrated biomedical sensing. There are other digital sensing companies (e.g. digital stethoscopes), but none have the software infrastructure to bridge the gap between physiological data, AI and healthcare providers.
+Competitor Commentary
+
+You haven't identified direct competitors in medical transcription or vet tech. Consider analyzing existing SaaS solutions and traditional EMR providers to highlight NxSCOPE's unique stethoscope-integrated advantage.
+Idea
+
+NxSCOPE is built on four years of proprietary R&D by veterinarians and engineers at NerveX, driven by our team’s expertise in veterinary science and biomedical engineering, ensuring a robust, IP-protected solution.
+Idea Source Commentary
+
+You show strong proprietary development over four years (slide 3), positioning as a founder-driven, tech-centric initiative. You could mention any patents or IP filings to underscore defensibility.
+–
+Progress
+
+We’ve closed a $1.4M pre-seed round, completed four years of integrated hardware and software development, and initiated initial device shipments to active pilot clinics, generating our first medical records through the SaaS platform. We have secured a partnership with a telemedicine company transcribing and generating over 5,000 call reports per month. We have just started hardware sales with our batch of 100 production NxSCOPE devices. 
+Progress Commentary
+
+You highlight a successful pre-seed round and key product milestones including device shipments and live records (slides 5 and 7). Adding partnership or customer names could enhance credibility.
+Traction
+
+Our platform is operational in multiple pilot clinics with records actively generated; we’ve secured $1.4M in pre-seed funding and are on track with product launches (NxVET, NxSCOPE) and international expansion plans. We have just started hardware sales with our batch of 100 production NxSCOPE devices. We are in discussions with major enterprise customers.
+Traction Commentary
+
+You demonstrate financial validation and product rollouts (slides 5 and 7), though adding specific usage metrics or customer testimonials would strengthen evidence of demand.
+–
+Location
+
+Toronto-based. Part of UTEST, already in the SRIC building (Room W680).
+Location Commentary
+
+Your deck doesn't specify company location. You could confirm if you're based in Toronto or open to relocating — this reassures investors about ecosystem engagement.
+Target Audience
+
+We target small to mid-sized veterinary clinics and hospital groups across North America, benefiting veterinarians looking to streamline recordkeeping and improve patient care within a $49.3 B serviceable market.
+Target Audience Commentary
+
+You clearly define your target as veterinary clinics and size your SAM (slide 4). Consider segmenting by clinic throughput or specialty to refine go-to-market focus.
+–
+Ideal Customer
+
+Our ideal customer is a veterinary clinic owner or practice manager running 2–10 exam rooms, seeking to reduce administrative burden, improve data accuracy, and enhance patient experience through tech-driven workflows.
+Ideal Customer Commentary
+
+You infer an ideal profile aligned with your pricing model ($75/month per clinic) on slide 5. You may add details on clinic throughput or revenue to sharpen the fit.
+Non Ideal Customer
+
+For now we are avoiding the consumer segment (pet owners) and focusing on larger chains of veterinary clinics.
+Non Ideal Customer Commentary
+
+You haven’t clarified non-ideal segments. Consider identifying large hospital chains already using complex EMRs or solo practitioners unwilling to adopt new hardware as non-targets.
+–
+Quantifiable Value
+
+We save 30% of administrative time currently spent writing medical records. We do so using encrypted recordings stored on a dedicated device (as opposed to clinic staff members using apps on personal devices). We also avoid the need for rectal temperature measurements, which contributes to veterinary health having the highest rate of occupational injuries in North America.
+Quantifiable Value Commentary
+
+You state improved data accuracy and reduced stress, but lack concrete metrics like % time saved per consultation. Consider surveying pilot users to gather quantifiable benefits.
+Problem Frequency
+
+Every day, every appointment.
+Problem Frequency Commentary
+
+While you note high burnout and recordkeeping burdens, you don't quantify frequency. Consider adding data like average hours spent on records per week to underline urgency.
+Success Metrics
+
+Minimize time spend writing medical records, minimize time collecting TPR measurements (temperature, pulse and respiratory rate).
+Success Metrics Commentary
+
+You could define KPIs, e.g., % reduction in recordkeeping time or increase in client satisfaction, so investors understand how customers measure ROI.
+–
+mvp
+
+Our MVP delivers core value via the NxSCOPE stethoscope attachment and SaaS transcription platform, capturing audio and health metrics in real time; phase two will integrate advanced analytics and hardware enhancements. Phase 3 will be a consumer oriented collar that integrates our sensors to provide telemedicine and "fitbit for pets" functionality.
+mvp_commentary
+
+You showcase a working MVP capturing audio and records (slide 3) with clear roadmap to hardware phase two. Adding a demo video link could make it more tangible.
+first_users
+
+Already have paid customers in clinics across North America. These early adopters have been forgiving during rollout, supporting regular firmware updates remotely for product improvements.
+first_users_commentary
+
+You mention active pilot clinics but omit details on their profiles and feedback. Sharing names, locations, or testimonials would bolster credibility.
+–
+problem_fit
+
+Yes. We're actively solving the problem of physiological data collection and medical record generation in clinics. We're actively trying to improve the user experience (we currently use a bluetooth mesh network, but are developing a power-efficient WiFi solution).
+problem_fit_commentary
+
+You explain the problem and solution but lack explicit customer validation. Consider including quotes or survey data from pilot users to demonstrate fit.
+early_customers
+
+Veterinary clinics. We are highly connected through our Chief Veterinary Officer, Dr. Mark de Wolde.
+early_customers_commentary
+
+Early customers aren’t described. Identifying top-tier clinics who are champions can help illustrate ease of conversion.
+–
+pricing
+
+We offer our SaaS transcription service at $75/month per clinic, with hardware device pricing scheduled for phase two, ensuring low entry cost and clear ROI for veterinary practices.
+pricing_commentary
+
+Your clear pricing on slide 5 aligns with market standards. You might outline hardware pricing ranges to prepare for phase two sales.
+buyers
+
+Our economic buyers are veterinary practice owners and operations managers responsible for workflow efficiency and patient satisfaction, typically evaluating ROI on clinical productivity tools.
+buyers_commentary
+
+You identify buyers logically based on clinic operations. Adding insights into their procurement cycles would further clarify your sales strategy.
+–
+founder_fit
+
+Our leadership blends veterinary expertise and business acumen—Dr. Gerard O’Leary (CEO) and Dr. Mark de Wolde (CVO) co-founded NxVET, combining 25 years of clinical insights with 10+ years of hardware and software development to execute this vision.
+founder_fit_commentary
+
+Your team slide (slide 6) demonstrates strong domain expertise. You could highlight any prior startup or technical achievements to underscore execution capability.
+role
+
+CEO. Driving the company to transform healthcare starting in the veterinary space, and translating our technology to human medicine. I will also maintain an active role in driving the engineering team, given that I was intimately involved in the development of the technology to date.
+role_commentary
+
+You haven't addressed how the founders' roles will evolve. Consider detailing how the CEO will shift from product development to scaling and fundraising.
+team_growth
+
+We have a stellar engineering team, but would like to convert some contractors to full-time employees. We need to expand our sales, marketing and support team. 
+team_growth_commentary
+
+Critical hires aren’t specified. Identifying key roles in sales, engineering, and customer success could clarify growth plans.
+–
+axl_support
+
+AXL is an amazing initiative that could help launch our technology at the perfect time. We would greatly appreciate the mentorship to take this from product-solution-fit to product-market-fit.
+axl_support_commentary
+
+Great job highlighting that you’d value AXL’s mentorship to bridge product-solution-fit and product-market-fit. To strengthen this, you could specify the exact areas where you’d like guidance—such as go-to-market strategy, user acquisition channels, or industry introductions. That extra detail will help AXL tailor their support more effectively.
+tech_resources
+
+I believe we could actually augment AXLs technical team. We have a multi-disciplinary collaborative lab on the 6th floor of the same building. We have extensive prototyping experience (PCB design, multi-material 3D printing to injection molding). We would greatly benefit from mentorship in getting this into higher production volumes.
+tech_resources_commentary
+
+Technical needs aren’t outlined. Consider requesting expertise in AWS scaling or hardware design to align with AXL strengths.
+business_support
+
+Absolutely, we are just starting to grow this side of the business with just 1 head of business development.
+business_support_commentary
+
+You haven't detailed mentoring needs. Outlining go-to-market or fundraising guidance would help shape AXL engagement.
+–
+founder_timing
+
+We have the technology. We have the core team. We need support in scaling and getting this into clinics.
+founder_timing_commentary
+
+You could add why now is the right time for the founders, tying to market trends or personal commitment.
+market_timing
+
+AI has transformed how technology is built and adopted. We are riding the wave of technology adoption into clinics.
+market_timing_commentary
+
+You mention a large veterinary market but haven’t discussed digitization trends. Highlight regulatory or tech adoption shifts driving urgency.
+differentiation
+
+We uniquely integrate stethoscope hardware with real-time audio capture and AI-driven transcription, unlike standalone EMR or transcription services, establishing a defensible ecosystem at the clinician's point of care.
+differentiation_commentary
+
+You differentiate well by combining device and SaaS in one solution (slide 3). To strengthen defensibility, consider sharing any patent status or proprietary algorithms.

@@ -1,5 +1,7 @@
 # Generated PDF reports
 *.pdf
+reports/*.pdf
+reports/*.zip
 
 # Environment variables
 .env
@@ -7,6 +9,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
+api_key.txt
 
 # Node modules
 node_modules/
@@ -41,4 +44,4 @@ dist/
 */dist/
 
 # Cursor files
-.cursorignore 
+.cursorignore

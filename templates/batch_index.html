@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXL Deep Research - Batch Company Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #fff, #ccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #aaa;
+            font-weight: 300;
+        }
+
+        .companies-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .company-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .company-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            border-radius: 12px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .company-card:hover::before {
+            opacity: 1;
+        }
+
+        .company-card:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-5px);
+        }
+
+        .company-card.dragover {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .company-name {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .company-name:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .company-name:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .company-name::placeholder {
+            color: #888;
+            font-style: italic;
+        }
+
+        .drop-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .drop-zone:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .drop-zone.dragover {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .drop-zone-text {
+            color: #ccc;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .file-info {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .file-uploaded {
+            color: #4CAF50;
+            font-weight: 500;
+        }
+
+        .add-company-btn {
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .add-company-btn:hover {
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .process-btn {
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .process-btn:hover {
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .process-btn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress-section {
+            margin-top: 40px;
+            display: none;
+        }
+
+        .progress-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .progress-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fff, #ccc);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .status-success {
+            color: #4CAF50;
+            font-weight: 500;
+        }
+
+        .status-error {
+            color: #f44336;
+            font-weight: 500;
+        }
+
+        .download-section {
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(45deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .instructions p {
+            color: #ccc;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .remove-company {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(244, 67, 54, 0.8);
+            border: none;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .remove-company:hover {
+            background: rgba(244, 67, 54, 1);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .companies-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .progress-bar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">AXL Deep Research</div>
+            <div class="subtitle">AI-Powered Company Analysis Platform</div>
+        </div>
+
+        <div class="instructions">
+            <h3>How to Use</h3>
+            <p>• Click on company names to edit them</p>
+            <p>• Drag and drop pitch deck PDFs to analyze companies</p>
+            <p>• Add internal notes (optional) for additional context</p>
+            <p>• Click "Process All Companies" to generate comprehensive reports</p>
+        </div>
+
+        <div class="companies-section">
+            <h2 class="section-title">Companies to Analyze</h2>
+            <div class="companies-grid" id="companiesGrid">
+                <!-- Companies will be added here dynamically -->
+            </div>
+            <button class="add-company-btn" onclick="addCompany()">+ Add Company</button>
+        </div>
+
+        <button class="process-btn" onclick="processCompanies()" disabled id="processBtn">
+            Process All Companies
+        </button>
+
+        <div class="progress-section" id="progressSection">
+            <h2 class="section-title">Processing Progress</h2>
+            <div id="progressContainer">
+                <!-- Progress items will be added here -->
+            </div>
+        </div>
+
+        <div class="download-section" id="downloadSection">
+            <h2 class="section-title">Download Reports</h2>
+            <a href="#" class="download-btn" id="downloadBtn">Download All Reports (ZIP)</a>
+        </div>
+    </div>
+
+    <script>
+        let companies = [];
+        let companyCounter = 0;
+
+        function addCompany() {
+            companyCounter++;
+            const company = {
+                id: Date.now(),
+                name: '',
+                pitchDeck: null,
+                internalNotes: null
+            };
+            companies.push(company);
+            renderCompanies();
+            
+            // Auto-focus on the new company name input
+            setTimeout(() => {
+                const newInput = document.querySelector(`input[data-id="${company.id}"]`);
+                if (newInput) {
+                    newInput.focus();
+                }
+            }, 100);
+        }
+
+        function removeCompany(id) {
+            companies = companies.filter(c => c.id !== id);
+            renderCompanies();
+            updateProcessButton();
+        }
+
+        function renderCompanies() {
+            const grid = document.getElementById('companiesGrid');
+            grid.innerHTML = '';
+
+            companies.forEach((company, index) => {
+                const card = document.createElement('div');
+                card.className = 'company-card';
+                card.innerHTML = `
+                    ${companies.length > 1 ? `<button class="remove-company" onclick="removeCompany(${company.id})">×</button>` : ''}
+                    <input 
+                        type="text" 
+                        class="company-name" 
+                        placeholder="Click to enter company name..."
+                        value="${company.name}"
+                        data-id="${company.id}"
+                        onchange="updateCompanyName(${company.id}, this.value)"
+                        onclick="this.select()"
+                    >
+                    <div class="drop-zone" 
+                         ondrop="handleDrop(event, ${company.id}, 'pitchDeck')" 
+                         ondragover="handleDragOver(event)"
+                         ondragleave="handleDragLeave(event)"
+                         onclick="document.getElementById('pitchDeck-${company.id}').click()">
+                        <div class="drop-zone-text">Pitch Deck (PDF)</div>
+                        <div class="file-info" id="pitchDeck-info-${company.id}">
+                            ${company.pitchDeck ? `✓ ${company.pitchDeck.name}` : 'Click or drag to upload'}
+                        </div>
+                        <input type="file" id="pitchDeck-${company.id}" style="display: none" 
+                               accept=".pdf" onchange="handleFileSelect(event, ${company.id}, 'pitchDeck')">
+                    </div>
+                    <div class="drop-zone" 
+                         ondrop="handleDrop(event, ${company.id}, 'internalNotes')" 
+                         ondragover="handleDragOver(event)"
+                         ondragleave="handleDragLeave(event)"
+                         onclick="document.getElementById('internalNotes-${company.id}').click()">
+                        <div class="drop-zone-text">Internal Notes (Optional)</div>
+                        <div class="file-info" id="internalNotes-info-${company.id}">
+                            ${company.internalNotes ? `✓ ${company.internalNotes.name}` : 'Click or drag to upload'}
+                        </div>
+                        <input type="file" id="internalNotes-${company.id}" style="display: none" 
+                               accept=".txt,.pdf,.doc,.docx" onchange="handleFileSelect(event, ${company.id}, 'internalNotes')">
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            updateProcessButton();
+        }
+
+        function updateCompanyName(id, name) {
+            const company = companies.find(c => c.id === id);
+            if (company) {
+                company.name = name || `Company ${companies.indexOf(company) + 1}`;
+            }
+            updateProcessButton();
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(event, companyId, fileType) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                updateCompanyFile(companyId, fileType, files[0]);
+            }
+        }
+
+        function handleFileSelect(event, companyId, fileType) {
+            const file = event.target.files[0];
+            if (file) {
+                updateCompanyFile(companyId, fileType, file);
+            }
+        }
+
+        function updateCompanyFile(companyId, fileType, file) {
+            const company = companies.find(c => c.id === companyId);
+            if (company) {
+                company[fileType] = file;
+                
+                // Update the file info display
+                const infoElement = document.getElementById(`${fileType}-info-${companyId}`);
+                if (infoElement) {
+                    infoElement.innerHTML = `<span class="file-uploaded">✓ ${file.name}</span>`;
+                }
+                
+                // Auto-set company name from filename if empty
+                if (!company.name && fileType === 'pitchDeck') {
+                    const filename = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
+                    const cleanName = filename.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    company.name = cleanName;
+                    
+                    // Update the input field
+                    const nameInput = document.querySelector(`input[data-id="${companyId}"]`);
+                    if (nameInput) {
+                        nameInput.value = cleanName;
+                    }
+                }
+                
+                updateProcessButton();
+            }
+        }
+
+        function updateProcessButton() {
+            const btn = document.getElementById('processBtn');
+            const hasValidCompanies = companies.some(c => c.name && c.pitchDeck);
+            btn.disabled = !hasValidCompanies;
+        }
+
+        async function processCompanies() {
+            const btn = document.getElementById('processBtn');
+            const progressSection = document.getElementById('progressSection');
+            const progressContainer = document.getElementById('progressContainer');
+            
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            progressSection.style.display = 'block';
+            progressContainer.innerHTML = '';
+
+            // Create progress items for each company
+            const validCompanies = companies.filter(c => c.name && c.pitchDeck);
+            validCompanies.forEach(company => {
+                const progressItem = document.createElement('div');
+                progressItem.className = 'progress-item fade-in';
+                progressItem.innerHTML = `
+                    <div class="progress-info">
+                        <div class="spinner"></div>
+                        <span>${company.name}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-${company.id}"></div>
+                    </div>
+                    <span class="status" id="status-${company.id}">Processing...</span>
+                `;
+                progressContainer.appendChild(progressItem);
+            });
+
+            try {
+                // Prepare company data
+                const companyData = validCompanies.map(company => ({
+                    name: company.name,
+                    pitchDeck: company.pitchDeck ? company.pitchDeck.name : null,
+                    internalNotes: company.internalNotes ? company.internalNotes.name : null
+                }));
+
+                // Simulate progress for each company
+                for (let i = 0; i < validCompanies.length; i++) {
+                    const company = validCompanies[i];
+                    const progressFill = document.getElementById(`progress-${company.id}`);
+                    const status = document.getElementById(`status-${company.id}`);
+                    
+                    // Animate progress
+                    progressFill.style.width = '50%';
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    progressFill.style.width = '100%';
+                    status.textContent = 'Completed';
+                    status.className = 'status status-success';
+                    
+                    // Remove spinner
+                    const spinner = status.parentElement.querySelector('.spinner');
+                    if (spinner) {
+                        spinner.style.display = 'none';
+                    }
+                }
+
+                // Send to backend
+                const response = await fetch('/process_companies', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ companies: companyData })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Show download section
+                    const downloadSection = document.getElementById('downloadSection');
+                    const downloadBtn = document.getElementById('downloadBtn');
+                    
+                    downloadSection.style.display = 'block';
+                    downloadBtn.href = `/download/${result.zip_file}`;
+                    downloadBtn.textContent = `Download All Reports (${validCompanies.length} companies)`;
+                } else {
+                    throw new Error(result.error || 'Processing failed');
+                }
+
+            } catch (error) {
+                console.error('Error processing companies:', error);
+                
+                // Update all statuses to error
+                validCompanies.forEach(company => {
+                    const status = document.getElementById(`status-${company.id}`);
+                    const spinner = status.parentElement.querySelector('.spinner');
+                    
+                    status.textContent = 'Error';
+                    status.className = 'status status-error';
+                    
+                    if (spinner) {
+                        spinner.style.display = 'none';
+                    }
+                });
+                
+                alert('Error processing companies: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Process All Companies';
+            }
+        }
+
+        // Initialize with one company
+        addCompany();
+    </script>
+</body>
+</html> 
