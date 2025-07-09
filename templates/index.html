@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXL Deep Research</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 15px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .file-input-label:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .file-input-label.has-file {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+        
+        .file-input-text {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+        
+        .required {
+            color: #e74c3c;
+        }
+        
+        .optional {
+            color: #95a5a6;
+            font-size: 0.85rem;
+            font-weight: normal;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 20px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        
+        .flash-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .flash-message.error {
+            background: #fee;
+            color: #e74c3c;
+            border: 1px solid #fcc;
+        }
+        
+        .flash-message.success {
+            background: #efe;
+            color: #27ae60;
+            border: 1px solid #cfc;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        
+        .info-box h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .info-box ul {
+            color: #6c757d;
+            margin-left: 20px;
+        }
+        
+        .info-box li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AXL Deep Research</h1>
+            <p>AI-Powered Company Analysis</p>
+        </div>
+        
+        <div class="info-box">
+            <h3>How it works:</h3>
+            <ul>
+                <li>Upload a company's pitch deck (PDF or TXT)</li>
+                <li>Optionally upload internal notes</li>
+                <li>Enter the company name</li>
+                <li>Get comprehensive AI-generated research reports</li>
+            </ul>
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-message {% if 'Error' in message or 'error' in message %}error{% else %}success{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
+            <div class="form-group">
+                <label for="company_name">Company Name <span class="required">*</span></label>
+                <input type="text" id="company_name" name="company_name" placeholder="Enter company name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="pitch_deck">Pitch Deck <span class="required">*</span></label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="pitch_deck" name="pitch_deck" class="file-input" accept=".pdf,.txt" required>
+                    <label for="pitch_deck" class="file-input-label">
+                        <span class="file-input-text">Click to upload pitch deck (PDF or TXT)</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="internal_notes">Internal Notes <span class="optional">(optional)</span></label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="internal_notes" name="internal_notes" class="file-input" accept=".pdf,.txt">
+                    <label for="internal_notes" class="file-input-label">
+                        <span class="file-input-text">Click to upload internal notes (PDF or TXT)</span>
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Generate Reports
+            </button>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generating reports... This may take a few minutes.</p>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Handle file input display
+        document.getElementById('pitch_deck').addEventListener('change', function(e) {
+            const label = e.target.nextElementSibling;
+            const textSpan = label.querySelector('.file-input-text');
+            if (e.target.files.length > 0) {
+                textSpan.textContent = e.target.files[0].name;
+                label.classList.add('has-file');
+            } else {
+                textSpan.textContent = 'Click to upload pitch deck (PDF or TXT)';
+                label.classList.remove('has-file');
+            }
+        });
+        
+        document.getElementById('internal_notes').addEventListener('change', function(e) {
+            const label = e.target.nextElementSibling;
+            const textSpan = label.querySelector('.file-input-text');
+            if (e.target.files.length > 0) {
+                textSpan.textContent = e.target.files[0].name;
+                label.classList.add('has-file');
+            } else {
+                textSpan.textContent = 'Click to upload internal notes (PDF or TXT)';
+                label.classList.remove('has-file');
+            }
+        });
+        
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+            loading.style.display = 'block';
+        });
+    </script>
+</body>
+</html> 

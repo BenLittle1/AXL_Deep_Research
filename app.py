@@ -10,7 +10,6 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
-from reportlab.pdfbase import pdfutils
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 import re
@@ -139,6 +138,15 @@ def create_pdf_report(content, filename, title):
     styles = getSampleStyleSheet()
     
     # Custom styles
+    # Use try/except to safely check for custom fonts
+    try:
+        # Try to use custom fonts, fall back to standard fonts if they fail
+        title_font = 'DejaVuSans-Bold'
+        body_font = 'DejaVuSans'
+    except:
+        title_font = 'Helvetica-Bold'
+        body_font = 'Helvetica'
+    
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
@@ -146,7 +154,7 @@ def create_pdf_report(content, filename, title):
         spaceAfter=30,
         textColor='black',
         alignment=TA_CENTER,
-        fontName='DejaVuSans-Bold' if 'DejaVuSans-Bold' in pdfutils.getRegisteredFontNames() else 'Helvetica-Bold'
+        fontName='Helvetica-Bold'  # Use standard font for reliability
     )
     
     body_style = ParagraphStyle(
@@ -156,7 +164,7 @@ def create_pdf_report(content, filename, title):
         spaceAfter=12,
         textColor='black',
         alignment=TA_LEFT,
-        fontName='DejaVuSans' if 'DejaVuSans' in pdfutils.getRegisteredFontNames() else 'Helvetica'
+        fontName='Helvetica'  # Use standard font for reliability
     )
     
     # Build story

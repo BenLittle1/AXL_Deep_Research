@@ -1,1 +1,5 @@
-.env 
+.env
+api_key.txt
+__pycache__/
+reports/*.pdf
+reports/*.zip
