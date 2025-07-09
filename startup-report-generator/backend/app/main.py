@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional, Dict, Any
 from dotenv import load_dotenv
 import os
 
@@ -29,6 +30,11 @@ class ReportRequest(BaseModel):
     pitch_deck_content: str = ""  # Optional pitch deck content
     internal_notes: str = ""  # Optional internal notes
 
+class AirtableWorkflowStatus(BaseModel):
+    id: str
+    name: str
+    color: str
+
 class AirtableWebhookRequest(BaseModel):
     company_name: str
     company_url: str = ""
@@ -36,6 +42,8 @@ class AirtableWebhookRequest(BaseModel):
     internal_notes: str = ""
     airtable_record_id: str = ""
     generate_both: bool = True
+    contact_email: str = ""
+    workflow_status: Optional[Any] = None  # Can be string or object
 
 @app.get("/")
 async def root():
@@ -113,8 +121,29 @@ async def airtable_webhook(request: AirtableWebhookRequest):
     """
     print(f"🔔 Airtable webhook triggered for {request.company_name}")
     print(f"📋 Record ID: {request.airtable_record_id}")
+    print(f"📧 Contact Email: {request.contact_email}")
+    
+    # Handle workflow_status - can be string or object
+    workflow_status_name = ""
+    if request.workflow_status:
+        if isinstance(request.workflow_status, dict):
+            workflow_status_name = request.workflow_status.get('name', '')
+        else:
+            workflow_status_name = str(request.workflow_status)
+    
+    print(f"🔄 Workflow Status: {workflow_status_name}")
+    print(f"📄 Pitch Deck Content Length: {len(request.pitch_deck_content)} chars")
+    print(f"📝 Internal Notes Length: {len(request.internal_notes)} chars")
     
     try:
+        # Validate required fields
+        if not request.company_name:
+            return {
+                "success": False,
+                "error": "Company name is required",
+                "airtable_record_id": request.airtable_record_id
+            }
+        
         # 1. Run Agent 1 to get the Comprehensive Intelligence Brief
         print("🤖 Executing Agent 1: Research Analyst...")
         intelligence_brief = agents.run_research_agent(
@@ -127,10 +156,12 @@ async def airtable_webhook(request: AirtableWebhookRequest):
         if not intelligence_brief:
             return {
                 "success": False,
-                "error": "Failed to retrieve company data",
+                "error": "Failed to retrieve company data from research agent",
                 "company_name": request.company_name,
                 "airtable_record_id": request.airtable_record_id
             }
+        
+        print(f"✅ Agent 1 completed successfully for: {intelligence_brief.get('companyName', request.company_name)}")
         
         reports_generated = []
         
@@ -142,7 +173,7 @@ async def airtable_webhook(request: AirtableWebhookRequest):
                     formatted_markdown = agents.run_formatting_agent(intelligence_brief, report_type)
                     pdf_bytes = pdf_generator.create_professional_pdf(formatted_markdown, report_type)
                     
-                    # Save to local directory (optional for Railway)
+                    # Generate filename
                     company_safe_name = intelligence_brief.get('companyName', request.company_name).replace(' ', '_').replace('.', '_')
                     filename = f"{company_safe_name}_{report_type}.pdf"
                     
@@ -170,12 +201,14 @@ async def airtable_webhook(request: AirtableWebhookRequest):
         
         success_count = len([r for r in reports_generated if r.get("status") == "generated"])
         
-        return {
+        response_data = {
             "success": success_count > 0,
             "company_name": intelligence_brief.get('companyName', request.company_name),
             "airtable_record_id": request.airtable_record_id,
             "reports_generated": reports_generated,
             "total_reports": success_count,
+            "contact_email": request.contact_email,
+            "workflow_status": workflow_status_name,
             "company_data": {
                 "tagline": intelligence_brief.get('tagline', ''),
                 "founded_year": intelligence_brief.get('foundedYear', ''),
@@ -186,13 +219,19 @@ async def airtable_webhook(request: AirtableWebhookRequest):
             "processing_time_seconds": "15-30"  # Approximate
         }
         
+        print(f"🎉 Webhook completed successfully for {request.company_name}")
+        print(f"📊 Generated {success_count} reports")
+        
+        return response_data
+        
     except Exception as e:
         print(f"❌ Error in Airtable webhook: {str(e)}")
         return {
             "success": False,
             "error": str(e),
             "company_name": request.company_name,
-            "airtable_record_id": request.airtable_record_id
+            "airtable_record_id": request.airtable_record_id,
+            "contact_email": request.contact_email
         }
 
 if __name__ == "__main__":
