@@ -14,10 +14,10 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy only the startup-report-generator directory contents
-COPY startup-report-generator/requirements.txt .
-COPY startup-report-generator/start.py .
-COPY startup-report-generator/backend ./backend
+# Copy requirements and application files
+COPY requirements.txt .
+COPY start.py .
+COPY backend ./backend
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
