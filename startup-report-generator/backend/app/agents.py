@@ -34,9 +34,11 @@ def run_research_agent(company_name: str, company_url: str, pitch_deck_content: 
     print(f"🔑 API key length: {len(api_key)}")
     print(f"🌐 API endpoint: {api_endpoint}")
     
+    # Updated headers to match Perplexity API documentation
     headers = {
         "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Accept": "application/json"
     }
 
     # This is the master prompt for our research agent.
@@ -80,7 +82,7 @@ def run_research_agent(company_name: str, company_url: str, pitch_deck_content: 
             "description": "string"
           }}
         ]
-      }},
+      }}
       "team": [
         {{
           "name": "string",
@@ -121,17 +123,38 @@ def run_research_agent(company_name: str, company_url: str, pitch_deck_content: 
     # Check if we're using Perplexity API (which has different model names)
     if "perplexity.ai" in api_endpoint:
         payload = {
-            "model": "sonar-pro",  # Updated to current Perplexity model name
-            "messages": [{"role": "user", "content": research_prompt}],
+            "model": "sonar-pro",  # Current Perplexity model name
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are a world-class financial and market research analyst. Provide detailed, structured responses in JSON format only."
+                },
+                {
+                    "role": "user", 
+                    "content": research_prompt
+                }
+            ],
             "temperature": 0.1,
-            "max_tokens": 4000
+            "max_tokens": 4000,
+            "top_p": 1,
+            "frequency_penalty": 0,
+            "presence_penalty": 0
         }
         print(f"🔧 Using Perplexity API format with model: sonar-pro")
     else:
         # Default to OpenAI format
         payload = {
             "model": "gpt-4-turbo",
-            "messages": [{"role": "user", "content": research_prompt}],
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are a world-class financial and market research analyst. Provide detailed, structured responses in JSON format only."
+                },
+                {
+                    "role": "user", 
+                    "content": research_prompt
+                }
+            ],
             "response_format": {"type": "json_object"},
             "temperature": 0.1,
             "max_tokens": 4000
@@ -166,6 +189,12 @@ def run_research_agent(company_name: str, company_url: str, pitch_deck_content: 
             
             if response.status_code == 400:
                 print("❌ Bad Request - Check API key and model name")
+                # Try to parse error details
+                try:
+                    error_details = response.json()
+                    print(f"❌ Error details: {error_details}")
+                except:
+                    pass
             elif response.status_code == 401:
                 print("❌ Unauthorized - API key is invalid")
             elif response.status_code == 429:
