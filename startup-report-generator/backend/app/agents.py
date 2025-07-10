@@ -4,8 +4,19 @@ import requests
 import json
 import traceback
 import time
+import requests
+from io import BytesIO
+from typing import Dict, Optional
 from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Add PDF text extraction imports
+import PyPDF2
+import pdfplumber
+
+# Load environment variables
+load_dotenv()
 
 # --- Agent 1: The Research Analyst ---
 
@@ -502,3 +513,476 @@ def run_formatting_agent(intelligence_brief: dict, report_type: str) -> str:
         print(f"❌ Error in formatting agent: {str(e)}")
         print(f"❌ Formatting agent traceback: {traceback.format_exc()}")
         raise 
+
+def _perform_web_research(research_prompt: str, company_name: str) -> dict:
+    """
+    Perform web research using the same API approach as run_research_agent.
+    Returns structured research results.
+    """
+    # Check environment variables
+    api_key = os.getenv("AI_API_KEY") or os.getenv("PERPLEXITY_API_KEY")
+    api_endpoint = os.getenv("AI_API_ENDPOINT") or "https://api.perplexity.ai/chat/completions"
+    
+    if not api_key or api_key == "YOUR_API_KEY_HERE":
+        print("⚠️ Warning: AI_API_KEY/PERPLEXITY_API_KEY not configured. Using mock web research.")
+        return {
+            'summary': f'Mock web research results for {company_name}',
+            'recent_developments': [f'Recent development 1 for {company_name}', f'Recent development 2 for {company_name}'],
+            'search_results': [{'title': 'Mock Result', 'url': 'https://example.com', 'snippet': 'Mock research data'}],
+            'problem_validation': f'Market validation data for {company_name}',
+            'market_insights': f'Market insights for {company_name}',
+            'competitors': f'Additional competitors for {company_name}',
+            'team_background': f'Team background research for {company_name}',
+            'customer_traction': f'Customer traction evidence for {company_name}',
+            'funding_status': f'Funding information for {company_name}',
+            'investment_status': f'Investment status for {company_name}'
+        }
+    
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+    
+    # Check if we're using Perplexity API
+    if "perplexity.ai" in api_endpoint:
+        payload = {
+            "model": "sonar-pro",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are a research specialist. Provide comprehensive, structured research results."
+                },
+                {
+                    "role": "user", 
+                    "content": research_prompt
+                }
+            ],
+            "temperature": 0.1,
+            "max_tokens": 3000,
+            "top_p": 1,
+            "frequency_penalty": 0,
+            "presence_penalty": 0
+        }
+    else:
+        payload = {
+            "model": "gpt-4-turbo",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are a research specialist. Provide comprehensive, structured research results."
+                },
+                {
+                    "role": "user", 
+                    "content": research_prompt
+                }
+            ],
+            "temperature": 0.1,
+            "max_tokens": 3000
+        }
+    
+    try:
+        print(f"🌐 Making web research API request...")
+        
+        response = requests.post(
+            api_endpoint, 
+            headers=headers, 
+            json=payload, 
+            timeout=120
+        )
+        
+        if response.status_code != 200:
+            print(f"❌ Web research API Error - Status: {response.status_code}")
+            print(f"❌ Response: {response.text}")
+            # Return mock data on API failure
+            return {
+                'summary': f'API Error - using fallback data for {company_name}',
+                'recent_developments': [],
+                'search_results': [],
+                'error': f'API returned {response.status_code}'
+            }
+        
+        response.raise_for_status()
+        response_data = response.json()
+        
+        # Extract content from response
+        content = ""
+        if "choices" in response_data and len(response_data["choices"]) > 0:
+            content = response_data["choices"][0]["message"]["content"]
+        
+        # Parse the research results
+        try:
+            # Try to parse as JSON if the AI returned structured data
+            import json
+            research_data = json.loads(content)
+            return research_data
+        except:
+            # If not JSON, create structured response from text
+            return {
+                'summary': content[:500] + "..." if len(content) > 500 else content,
+                'recent_developments': [content[:200] + "..."] if content else [],
+                'search_results': [{'title': 'Research Results', 'content': content}],
+                'raw_response': content
+            }
+        
+    except Exception as e:
+        print(f"❌ Web research API error: {str(e)}")
+        return {
+            'summary': f'Error conducting web research for {company_name}',
+            'error': str(e),
+            'search_results': []
+        }
+
+def research_company(company_data: dict, research_type: str = "comprehensive") -> dict:
+    """
+    NEW ENHANCED RESEARCH AGENT: Combines Google Sheets data with real AI-powered web research.
+    
+    This agent acts as Agent 1 - Deep Research Analyst that:
+    1. Takes existing Google Sheets analysis data as foundation
+    2. Extracts text content from pitch deck PDF if available
+    3. Conducts real web research using Perplexity API 
+    4. Combines all sources into comprehensive intelligence brief
+    
+    Args:
+        company_data: Rich company data extracted from Google Sheet
+        research_type: Type of research ('comprehensive', 'quick', 'deep_dive')
+    
+    Returns:
+        dict: Research results ready for Agent 2 (Formatting Specialist)
+    """
+    company_name = company_data.get('company_name', '')
+    
+    if not company_name:
+        return {
+            'success': False,
+            'error': 'No company name provided',
+            'research_data': {}
+        }
+    
+    print(f"🤖 ENHANCED RESEARCH AGENT STARTED for: {company_name}")
+    print("="*60)
+    
+    try:
+        # Extract existing analysis summary
+        existing_summary = _summarize_existing_data(company_data)
+        company_website = company_data.get('website', '') or f"https://{company_name.lower().replace(' ', '')}.com"
+        
+        # NEW: Extract pitch deck content from PDF_URL
+        pitch_deck_content = ""
+        pdf_url = company_data.get('additional_context', {}).get('pdf_url', '')
+        
+        if pdf_url:
+            print(f"🎯 Found pitch deck URL: {pdf_url}")
+            pitch_deck_content = extract_text_from_pdf_url(pdf_url)
+            if pitch_deck_content:
+                print(f"📄 Successfully extracted {len(pitch_deck_content)} characters from pitch deck")
+                print(f"📊 Pitch deck preview: {pitch_deck_content[:200]}...")
+            else:
+                print("⚠️ Failed to extract content from pitch deck PDF")
+        else:
+            print("ℹ️ No pitch deck PDF URL found in company data")
+        
+        # Create enhanced research prompt that combines ALL available data
+        research_context = f"""
+EXISTING ANALYSIS DATA (from internal assessment):
+{existing_summary}
+"""
+        
+        if pitch_deck_content:
+            research_context += f"""
+
+PITCH DECK CONTENT (extracted from PDF):
+{pitch_deck_content}
+"""
+        
+        research_prompt = f"""
+You are a world-class Tier 1 financial and market research analyst conducting comprehensive research on "{company_name}".
+
+{research_context}
+
+Your task is to conduct REAL WEB RESEARCH to supplement, validate, and enhance this existing data. Research the company thoroughly using current web sources and provide a comprehensive intelligence brief in JSON format.
+
+RESEARCH OBJECTIVES:
+1. Validate existing problem/solution analysis with market evidence
+2. Find current company status, recent news, funding rounds, partnerships
+3. Research the actual team members, founders, and their backgrounds  
+4. Discover real competitors and market positioning
+5. Find evidence of customer traction, testimonials, case studies
+6. Research current market trends and industry dynamics
+7. Investigate technology, product status, and intellectual property
+8. Assess financial status, funding history, and investor relations
+9. Identify any red flags, controversies, or concerns
+10. Gather specific metrics, market size data, and growth indicators
+
+{f"11. Cross-reference and validate information from the pitch deck with web research" if pitch_deck_content else ""}
+
+Synthesize ALL findings (existing analysis + pitch deck + web research) into a structured JSON object:
+
+{{
+  "companyName": "{company_name}",
+  "foundedYear": "string (actual founding year from research)",
+  "tagline": "string (actual company tagline/mission)",
+  "executiveSummary": "3-4 sentence comprehensive summary combining all data sources",
+  "problemStatement": "Clear description of the problem they solve (validated by research)",
+  "solution": "Detailed description of their solution/product (from all sources)",
+  "businessModel": "How they generate revenue (actual business model)",
+  "marketAnalysis": {{
+    "sizeTAM": "Total addressable market size with source",
+    "sizeSAM": "Serviceable addressable market", 
+    "sizeSOM": "Serviceable obtainable market",
+    "keyTrends": ["Current market trends supporting the business"],
+    "targetCustomer": "Actual target customer profile from research",
+    "competitors": [
+      {{
+        "name": "competitor name",
+        "description": "what they do and how they compete"
+      }}
+    ]
+  }},
+  "team": [
+    {{
+      "name": "actual founder/team member name",
+      "title": "their actual title",
+      "background": "their actual background and experience"
+    }}
+  ],
+  "financials": {{
+    "totalFunding": "actual funding raised",
+    "lastRound": "most recent funding round details",
+    "revenue": "current revenue if available", 
+    "valuation": "current valuation if available",
+    "fundingRounds": [
+      {{
+        "type": "round type",
+        "amount": "amount raised",
+        "date": "date",
+        "leadInvestor": "lead investor"
+      }}
+    ]
+  }},
+  "productOverview": "Current product status and offerings",
+  "technologyStack": ["Technologies they actually use"],
+  "intellectualProperty": ["Patents, trademarks, or IP they hold"],
+  "swotAnalysis": {{
+    "strengths": ["Validated strengths from research"],
+    "weaknesses": ["Identified weaknesses or concerns"],
+    "opportunities": ["Market opportunities they can capture"],
+    "threats": ["Competitive or market threats"]
+  }}
+}}
+
+Conduct REAL web research on {company_name} (website: {company_website}) and provide ONLY the JSON object with actual researched data. No additional text.
+"""
+        
+        print(f"🌐 Conducting comprehensive web research...")
+        print(f"📊 Existing analysis data: {len([k for k,v in company_data.items() if v and k != 'row_number'])} fields")
+        if pitch_deck_content:
+            print(f"📄 Pitch deck data: {len(pitch_deck_content)} characters")
+        
+        # Use the main research agent to get comprehensive intelligence brief
+        intelligence_brief = run_research_agent(
+            company_name=company_name,
+            company_url=company_website, 
+            pitch_deck_content=pitch_deck_content,  # Pass extracted PDF content
+            internal_notes=existing_summary  # Pass existing analysis as internal notes
+        )
+        
+        if not intelligence_brief:
+            raise Exception("Failed to get intelligence brief from research agent")
+        
+        print(f"✅ Enhanced research completed successfully!")
+        print(f"📊 Intelligence brief contains {len(intelligence_brief.keys())} sections")
+        if pitch_deck_content:
+            print(f"📄 Research included pitch deck content analysis")
+        print("="*60)
+        
+        # Return in format expected by formatting agent
+        return {
+            'success': True,
+            'research_data': intelligence_brief  # Return intelligence brief directly
+        }
+        
+    except Exception as e:
+        print(f"❌ Enhanced research failed for {company_name}: {str(e)}")
+        traceback.print_exc()
+        return {
+            'success': False,
+            'error': str(e),
+            'research_data': {}
+        }
+
+def _summarize_existing_data(company_data: dict) -> str:
+    """Create a concise summary of existing company data for research context."""
+    
+    summary_parts = []
+    
+    # Basic info
+    if company_data.get('company_name'):
+        summary_parts.append(f"Company: {company_data['company_name']}")
+    
+    # Problem analysis
+    problem_analysis = company_data.get('problem_analysis', {})
+    if problem_analysis.get('statement'):
+        summary_parts.append(f"Problem Statement: {problem_analysis['statement']}")
+    if problem_analysis.get('commentary'):
+        summary_parts.append(f"Problem Commentary: {problem_analysis['commentary']}")
+    
+    # Market analysis  
+    market_analysis = company_data.get('market_analysis', {})
+    if market_analysis.get('industry'):
+        summary_parts.append(f"Industry: {market_analysis['industry']}")
+    if market_analysis.get('competitors'):
+        summary_parts.append(f"Known Competitors: {market_analysis['competitors']}")
+    if market_analysis.get('target_audience'):
+        summary_parts.append(f"Target Audience: {market_analysis['target_audience']}")
+    
+    # Product analysis
+    product_analysis = company_data.get('product_analysis', {})
+    if product_analysis.get('mvp'):
+        summary_parts.append(f"MVP Status: {product_analysis['mvp']}")
+    
+    # Team analysis
+    team_analysis = company_data.get('team_analysis', {})
+    if team_analysis.get('founder_fit'):
+        summary_parts.append(f"Founder Fit: {team_analysis['founder_fit']}")
+    
+    # Business analysis
+    business_analysis = company_data.get('business_analysis', {})
+    if business_analysis.get('traction'):
+        summary_parts.append(f"Traction: {business_analysis['traction']}")
+    if business_analysis.get('pricing'):
+        summary_parts.append(f"Pricing: {business_analysis['pricing']}")
+    
+    return "\n".join(f"- {part}" for part in summary_parts) if summary_parts else "No existing data available"
+
+def _create_combined_analysis(company_data: dict, web_research: dict) -> dict:
+    """Create a combined analysis that merges existing data with web research findings."""
+    
+    return {
+        'data_sources': {
+            'existing_analysis': True,
+            'web_research': True,
+            'data_quality': 'comprehensive'
+        },
+        'analysis_sections': {
+            'problem_validation': {
+                'existing_assessment': company_data.get('problem_analysis', {}),
+                'market_evidence': web_research.get('problem_validation', 'See web research results'),
+            },
+            'market_analysis': {
+                'existing_analysis': company_data.get('market_analysis', {}),
+                'market_research': web_research.get('market_insights', 'See web research results'),
+            },
+            'competitive_landscape': {
+                'known_competitors': company_data.get('market_analysis', {}).get('competitors', ''),
+                'additional_competitors': web_research.get('competitors', 'See web research results'),
+            },
+            'team_assessment': {
+                'existing_evaluation': company_data.get('team_analysis', {}),
+                'background_research': web_research.get('team_background', 'See web research results'),
+            },
+            'business_model': {
+                'existing_analysis': company_data.get('business_analysis', {}),
+                'market_validation': web_research.get('business_validation', 'See web research results'),
+            }
+        },
+        'synthesis': 'This analysis combines structured existing data with current market research for comprehensive insights.'
+    } 
+
+def extract_text_from_pdf_url(pdf_url: str) -> str:
+    """
+    Download a PDF from URL and extract all text content from it.
+    
+    Args:
+        pdf_url: URL pointing to a PDF file
+        
+    Returns:
+        str: Extracted text content from the PDF
+    """
+    if not pdf_url or not pdf_url.strip():
+        print("⚠️ No PDF URL provided")
+        return ""
+    
+    try:
+        print(f"📄 Downloading PDF from: {pdf_url}")
+        
+        # Set headers to mimic a browser request
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        
+        # Download the PDF with timeout
+        response = requests.get(pdf_url, headers=headers, timeout=30)
+        response.raise_for_status()
+        
+        # Check if content is actually a PDF
+        content_type = response.headers.get('content-type', '').lower()
+        if 'pdf' not in content_type and not pdf_url.lower().endswith('.pdf'):
+            print(f"⚠️ URL doesn't appear to be a PDF: {content_type}")
+            return ""
+        
+        pdf_data = BytesIO(response.content)
+        print(f"✅ PDF downloaded successfully: {len(response.content)} bytes")
+        
+        # Try extracting text with pdfplumber first (more robust)
+        try:
+            text_content = ""
+            with pdfplumber.open(pdf_data) as pdf:
+                print(f"📖 PDF has {len(pdf.pages)} pages")
+                for page_num, page in enumerate(pdf.pages, 1):
+                    try:
+                        page_text = page.extract_text()
+                        if page_text:
+                            text_content += f"\n--- PAGE {page_num} ---\n"
+                            text_content += page_text + "\n"
+                        print(f"📄 Extracted text from page {page_num}: {len(page_text) if page_text else 0} chars")
+                    except Exception as page_error:
+                        print(f"⚠️ Error extracting page {page_num}: {page_error}")
+                        continue
+                        
+            if text_content.strip():
+                print(f"✅ Successfully extracted {len(text_content)} characters using pdfplumber")
+                return text_content.strip()
+                
+        except Exception as pdfplumber_error:
+            print(f"⚠️ pdfplumber extraction failed: {pdfplumber_error}")
+        
+        # Fallback to PyPDF2 if pdfplumber fails
+        try:
+            pdf_data.seek(0)  # Reset stream position
+            text_content = ""
+            
+            pdf_reader = PyPDF2.PdfReader(pdf_data)
+            print(f"📖 PDF has {len(pdf_reader.pages)} pages (PyPDF2)")
+            
+            for page_num, page in enumerate(pdf_reader.pages, 1):
+                try:
+                    page_text = page.extract_text()
+                    if page_text:
+                        text_content += f"\n--- PAGE {page_num} ---\n"
+                        text_content += page_text + "\n"
+                    print(f"📄 Extracted text from page {page_num}: {len(page_text) if page_text else 0} chars")
+                except Exception as page_error:
+                    print(f"⚠️ Error extracting page {page_num}: {page_error}")
+                    continue
+                    
+            if text_content.strip():
+                print(f"✅ Successfully extracted {len(text_content)} characters using PyPDF2")
+                return text_content.strip()
+                
+        except Exception as pypdf2_error:
+            print(f"⚠️ PyPDF2 extraction failed: {pypdf2_error}")
+        
+        print("❌ Both PDF extraction methods failed")
+        return ""
+        
+    except requests.exceptions.Timeout:
+        print("❌ PDF download timed out after 30 seconds")
+        return ""
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Error downloading PDF: {e}")
+        return ""
+    except Exception as e:
+        print(f"❌ Unexpected error extracting PDF text: {e}")
+        traceback.print_exc()
+        return "" 

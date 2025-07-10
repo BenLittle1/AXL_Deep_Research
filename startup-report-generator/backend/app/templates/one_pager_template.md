@@ -26,23 +26,19 @@
 </div>
 
 ## BUSINESS OVERVIEW
-| **Problem Statement** | **Solution** |
-|:----------------------|:-------------|
-| {{ problemStatement }} | {{ solution }} |
+**Problem:** {{ problemStatement }}
 
-**Business Model:** {{ businessModel }}
+**Solution:** {{ solution }}
 
-**Target Customer:** {{ marketAnalysis.targetCustomer }}
+**Business Model:** {{ businessModel }} | **Target Customer:** {{ marketAnalysis.targetCustomer }}
 
 ## LEADERSHIP TEAM
 {% for member in team %}
-**{{ member.name }}** - {{ member.title }} | {{ member.background }}
+• **{{ member.name }}**, {{ member.title }} - {{ member.background }}
 {% endfor %}
 
 ## MARKET POSITION
-**Key Market Trends:** {% for trend in marketAnalysis.keyTrends %}{{ trend }}{% if not loop.last %} • {% endif %}{% endfor %}
+Key trends driving market growth: {% for trend in marketAnalysis.keyTrends %}{{ trend }}{% if not loop.last %}, {% endif %}{% endfor %}. These create favorable conditions for {{ companyName }}'s expansion.
 
 ## STRATEGIC ASSESSMENT
-**Strengths:** {% for strength in swotAnalysis.strengths %}{{ strength }}{% if not loop.last %}, {% endif %}{% endfor %}
-
-**Key Opportunities:** {% for opportunity in swotAnalysis.opportunities %}{{ opportunity }}{% if not loop.last %}, {% endif %}{% endfor %} 
+**Strengths:** {% for strength in swotAnalysis.strengths %}{{ strength }}{% if not loop.last %}, {% endif %}{% endfor %} | **Opportunities:** {% for opportunity in swotAnalysis.opportunities %}{{ opportunity }}{% if not loop.last %}, {% endif %}{% endfor %} 

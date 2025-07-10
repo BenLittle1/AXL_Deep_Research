@@ -10,6 +10,7 @@ import traceback
 import time
 
 from . import agents, pdf_generator
+from .google_sheets import process_companies_from_sheets, sheets_integration
 
 # Load environment variables
 load_dotenv()
@@ -46,6 +47,10 @@ class AirtableWebhookRequest(BaseModel):
     generate_both: bool = True
     contact_email: str = ""
     workflow_status: Optional[Any] = None  # Can be string or object
+
+class GoogleSheetsRequest(BaseModel):
+    sheet_id: str
+    worksheet_name: str = "Sheet1"
 
 @app.get("/")
 async def root():
@@ -381,6 +386,77 @@ async def airtable_webhook(request: AirtableWebhookRequest):
             "timestamp": time.strftime('%Y-%m-%d %H:%M:%S'),
             "traceback": traceback.format_exc()
         }
+
+@app.post("/google-sheets-process")
+async def process_google_sheets(request: GoogleSheetsRequest):
+    """
+    Process companies from a Google Sheet.
+    This endpoint reads companies from the specified Google Sheet and generates reports for them.
+    """
+    print("="*80)
+    print("📊 GOOGLE SHEETS PROCESSING STARTED")
+    print("="*80)
+    print(f"⏰ Timestamp: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"📋 Sheet ID: {request.sheet_id}")
+    print(f"📋 Worksheet: {request.worksheet_name}")
+    
+    try:
+        # Process companies from the Google Sheet
+        results = process_companies_from_sheets(request.sheet_id, request.worksheet_name)
+        
+        print(f"✅ Google Sheets processing completed")
+        print(f"📊 Processed: {results.get('companies_processed', 0)}")
+        print(f"📊 Failed: {results.get('companies_failed', 0)}")
+        print("="*80)
+        
+        return results
+        
+    except Exception as e:
+        error_msg = f"Error processing Google Sheets: {str(e)}"
+        print(f"❌ {error_msg}")
+        print(f"❌ Full traceback: {traceback.format_exc()}")
+        print("="*80)
+        
+        return {
+            "success": False,
+            "error": error_msg,
+            "companies_processed": 0,
+            "companies_failed": 0,
+            "errors": [error_msg],
+            "timestamp": time.strftime('%Y-%m-%d %H:%M:%S'),
+            "traceback": traceback.format_exc()
+        }
+
+@app.get("/google-sheets-info/{sheet_id}")
+async def get_google_sheets_info(sheet_id: str, worksheet_name: str = "Sheet1"):
+    """
+    Get information about a Google Sheet without processing it.
+    Useful for testing connectivity and viewing sheet structure.
+    """
+    try:
+        # Connect to the sheet
+        if not sheets_integration.connect_to_sheet(sheet_id, worksheet_name):
+            raise HTTPException(status_code=400, detail="Failed to connect to Google Sheet")
+        
+        # Get sheet info
+        info = sheets_integration.get_sheet_info()
+        
+        # Get pending companies count
+        pending_companies = sheets_integration.get_pending_companies()
+        info['pending_companies_count'] = len(pending_companies)
+        
+        return {
+            "success": True,
+            "sheet_info": info,
+            "pending_companies": len(pending_companies),
+            "timestamp": time.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        
+    except Exception as e:
+        error_msg = f"Error getting Google Sheets info: {str(e)}"
+        print(f"❌ {error_msg}")
+        
+        raise HTTPException(status_code=500, detail=error_msg)
 
 if __name__ == "__main__":
     import uvicorn
