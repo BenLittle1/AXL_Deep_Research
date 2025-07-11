@@ -1,0 +1,56 @@
+# AXL Ventures Deep Research - Environment Configuration Template
+# Copy this to .env and update with your actual values
+
+# ==============================================
+# AI API Configuration (Required)
+# ==============================================
+# Primary AI API Key (Perplexity recommended)
+AI_API_KEY=your_perplexity_api_key_here
+PERPLEXITY_API_KEY=your_perplexity_api_key_here
+
+# AI API Endpoint
+AI_API_ENDPOINT=https://api.perplexity.ai/chat/completions
+
+# ==============================================
+# Google Sheets Integration (New)
+# ==============================================
+# Option 1: JSON credentials as environment variable (Recommended for production)
+# Copy the entire contents of your service account JSON file here
+GOOGLE_SHEETS_CREDENTIALS={"type":"service_account","project_id":"your-project","private_key_id":"..."}
+
+# Option 2: Path to credentials file (Good for local development)
+GOOGLE_SHEETS_CREDENTIALS_FILE=google_sheets_credentials.json
+
+# Your Google Sheet Configuration
+GOOGLE_SHEET_ID=1a2b3c4d5e6f7g8h9i0j...
+GOOGLE_WORKSHEET_NAME=Sheet1
+
+# ==============================================
+# Application Configuration
+# ==============================================
+# Port for the API server
+PORT=8000
+
+# Logging level (DEBUG, INFO, WARNING, ERROR)
+LOGGING_LEVEL=INFO
+
+# ==============================================
+# Setup Instructions
+# ==============================================
+# 1. Copy this file to .env
+# 2. Replace all "your_*_here" values with your actual credentials
+# 3. For Google Sheets:
+#    - Create a service account in Google Cloud Console
+#    - Enable Google Sheets API and Google Drive API
+#    - Download the JSON credentials file
+#    - Either paste the JSON content into GOOGLE_SHEETS_CREDENTIALS
+#    - Or save the file and set GOOGLE_SHEETS_CREDENTIALS_FILE path
+# 4. Get your Google Sheet ID from the URL
+# 5. Share your Google Sheet with the service account email
+
+# ==============================================
+# Example Values (Replace with your actual values)
+# ==============================================
+# AI_API_KEY=pplx-abc123def456...
+# GOOGLE_SHEET_ID=1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms
+# GOOGLE_SHEETS_CREDENTIALS={"type":"service_account","project_id":"my-project",...} 

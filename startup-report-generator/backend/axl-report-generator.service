@@ -1,0 +1,20 @@
+[Unit]
+Description=AXL Automated Report Generator
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=benlittle
+Group=staff
+WorkingDirectory=/Users/benlittle/Desktop/Stuff/Projects/AXL/AXL_Ventures_Deep_Research/startup-report-generator/backend
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/Users/benlittle/Desktop/Stuff/Projects/AXL/AXL_Ventures_Deep_Research/startup-report-generator/backend/venv/bin/python automated_processor.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=axl-report-generator
+
+[Install]
+WantedBy=multi-user.target 

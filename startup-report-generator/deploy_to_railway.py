@@ -34,8 +34,9 @@ def check_local_env():
         'GOOGLE_DRIVE_PARENT_FOLDER_ID': os.getenv('GOOGLE_DRIVE_PARENT_FOLDER_ID')
     }
     
-    required_vars = ['OPENAI_API_KEY', 'GOOGLE_CREDENTIALS_JSON', 'GOOGLE_SHEET_ID']
-    optional_vars = ['PERPLEXITY_API_KEY', 'AI_API_KEY', 'AI_API_ENDPOINT', 'GOOGLE_DRIVE_PARENT_FOLDER_ID']
+    required_vars = ['GOOGLE_CREDENTIALS_JSON', 'GOOGLE_SHEET_ID']
+    ai_vars = ['PERPLEXITY_API_KEY', 'AI_API_KEY']  # Need at least one of these
+    optional_vars = ['AI_API_ENDPOINT', 'GOOGLE_DRIVE_PARENT_FOLDER_ID', 'GOOGLE_WORKSHEET_NAME']
     
     all_good = True
     
@@ -58,6 +59,22 @@ def check_local_env():
         else:
             print(f"   ❌ {var}: Not set")
             all_good = False
+    
+    # Check AI API keys (need at least one)
+    print("\n📋 AI API VARIABLES (need at least one):")
+    ai_key_found = False
+    for var in ai_vars:
+        value = env_vars[var]
+        if value:
+            masked_value = value[:8] + "..." if len(value) > 8 else value
+            print(f"   ✅ {var}: {masked_value}")
+            ai_key_found = True
+        else:
+            print(f"   ⚪ {var}: Not set")
+    
+    if not ai_key_found:
+        print("   ❌ No AI API key found! Set either PERPLEXITY_API_KEY or AI_API_KEY")
+        all_good = False
     
     print("\n📋 OPTIONAL VARIABLES:")
     for var in optional_vars:
